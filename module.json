@@ -1,0 +1,11 @@
+{
+  "name": "microbit-bt2boat",
+  "version": "0.0.1",
+  "description": "The micro:bit based bluetooth receiver to power and steer a boat based on the kitronic robotics board",
+  "license": "MIT",
+  "dependencies": {
+    "microbit": "lancaster-university/microbit#v2.1.1"
+  },
+  "targetDependencies": {},
+  "bin": "./source"
+}
