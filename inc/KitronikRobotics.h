@@ -23,50 +23,13 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 */
 
-#ifndef MICROBIT_H
-#define MICROBIT_H
+#ifndef KITRONIKROBOTICS_H
+#define KITRONIKROBOTICS_H
 
-#include "mbed.h"
-
-#include "MicroBitConfig.h"
-#include "MicroBitHeapAllocator.h"
-#include "MicroBitDevice.h"
-#include "ErrorNo.h"
-#include "MicroBitSystemTimer.h"
-#include "MicroBitCompat.h"
-#include "MicroBitComponent.h"
-#include "ManagedType.h"
-#include "ManagedString.h"
-#include "MicroBitImage.h"
-#include "MicroBitFont.h"
-#include "MicroBitEvent.h"
-#include "DynamicPwm.h"
-#include "MicroBitI2C.h"
-#include "NotifyEvents.h"
-
-#include "MicroBitButton.h"
-#include "MicroBitPin.h"
-#include "MicroBitCompass.h"
-#include "MicroBitCompassCalibrator.h"
-#include "MicroBitAccelerometer.h"
-#include "MicroBitThermometer.h"
-#include "MicroBitLightSensor.h"
-#include "MicroBitMultiButton.h"
-
-#include "MicroBitSerial.h"
-#include "MicroBitIO.h"
-#include "MicroBitMatrixMaps.h"
-#include "MicroBitDisplay.h"
-
-#include "MicroBitFiber.h"
-#include "MicroBitMessageBus.h"
-
-#include "MicroBitBLEManager.h"
-#include "MicroBitRadio.h"
-#include "MicroBitStorage.h"
+#include "MicroBit.h"
 
 // MicroBit::flags values
-#define MICROBIT_INITIALIZED                    0x01
+#define KITRONICSROBOTICS_INITIALIZED                    0x01
 
 /**
   * Class definition for a MicroBit device.
@@ -74,55 +37,28 @@ DEALINGS IN THE SOFTWARE.
   * Represents the device as a whole, and includes member variables that represent various device drivers
   * used to control aspects of the micro:bit.
   */
-class MicroBit
+class  KitronikRobotics
 {
     private:
 
-    /**
-      * A listener to perform actions as a result of Message Bus reflection.
-      *
-      * In some cases we want to perform lazy instantiation of components, such as
-      * the compass and the accelerometer, where we only want to add them to the idle
-      * fiber when someone has the intention of using these components.
-      */
-    void                        onListenerRegisteredEvent(MicroBitEvent evt);
+    static const uint8_t        prescale_reg      = 0xFE;
+    static const uint8_t        mode_1_reg        = 0x00;
+    static const uint8_t        srv_reg_base      = 0x08;
+    static const uint8_t        mot_reg_base      = 0x28;
+    static const uint8_t        reg_offset        = 4;
+    static const uint8_t        servo_multiplier  = 226;
+    static const uint8_t        servo_zero_offset = 0x66;
 
     uint8_t                     status;
+    uint8_t                     chip_address; // will be defaulted to 0x6C
+    MicroBitI2C                 &i2c; 
+
+    uint8_t                     step_init;
+    uint16_t                    step_stage;
+    uint16_t                    stepper_1_steps;
+    uint16_t                    stepper_2_steps;
 
     public:
-
-    // Serial Interface
-    MicroBitSerial              serial;
-
-	// Reset Button
-	InterruptIn     		    resetButton;
-
-    // Persistent key value store
-    MicroBitStorage             storage;
-
-    // I2C Interface
-    MicroBitI2C                 i2c;
-
-    // Device level Message Bus abstraction
-    MicroBitMessageBus          messageBus;
-
-    // Member variables to represent each of the core components on the device.
-    MicroBitDisplay             display;
-    MicroBitButton              buttonA;
-    MicroBitButton              buttonB;
-    MicroBitMultiButton         buttonAB;
-    MicroBitAccelerometer       &accelerometer;
-    MicroBitCompass             &compass;
-    MicroBitCompassCalibrator   compassCalibrator;
-    MicroBitThermometer         thermometer;
-
-    //An object of available IO pins on the device
-    MicroBitIO                  io;
-
-    // Bluetooth related member variables.
-	MicroBitBLEManager		    bleManager;
-    MicroBitRadio               radio;
-    BLEDevice                   *ble;
 
     /**
       * Constructor.
@@ -130,7 +66,7 @@ class MicroBit
       * Create a representation of a MicroBit device, which includes member variables
       * that represent various device drivers used to control aspects of the micro:bit.
       */
-    MicroBit();
+    KitronikRobotics(MicroBitI2C &_i2c, uint8_t _chip_address = 0x6C);
 
     /**
       * Post constructor initialisation method.
@@ -158,7 +94,7 @@ class MicroBit
       * ManagedString name = uBit.getName();
       * @endcode
       */
-    static ManagedString getName();
+    static ManagedString servo_write(uint8_t servo, uint8_t degrees);
 
     /**
       * Return the serial number of this device.
