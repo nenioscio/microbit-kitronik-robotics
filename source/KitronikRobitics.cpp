@@ -53,30 +53,36 @@ KitronikRobotics::KitronikRobotics(MicroBitI2C &_i2c, uint8_t _chip_address) : i
   */
 void KitronikRobotics::init()
 {
-    char buf[2];
+    uint8_t ibuf[2];
+    char cbuf[2];
     if (status & KITRONIKROBOTICS_INITIALIZED)
         return;
 
-    buf[0] = prescale_reg;
-    buf[1] = 0x85; //50Hz
-    i2c.write(chip_address, buf, 2);
+    ibuf[0] = prescale_reg;
+    ibuf[1] = 0x85; //50Hz
+    memcpy(cbuf, ibuf, 2);
+    i2c.write(chip_address, cbuf, 2);
 
     for (uint8_t block_reg=0xFA; block_reg < 0xFE; block_reg++) {
-        buf[0] = block_reg;
-        buf[1] = 0x00;
-        i2c.write(chip_address, buf, 2);
+        ibuf[0] = block_reg;
+        ibuf[1] = 0x00;
+        memcpy(cbuf, ibuf, 2);
+        i2c.write(chip_address, cbuf, 2);
     }
 
-    buf[0] = mode_1_reg;
-    buf[1] = 0x01;
-    i2c.write(chip_address, buf, 2);
+    ibuf[0] = mode_1_reg;
+    ibuf[1] = 0x01;
+    memcpy(cbuf, ibuf, 2);
+    i2c.write(chip_address, cbuf, 2);
 
     status |= KITRONIKROBOTICS_INITIALIZED;
 }
 
 void KitronikRobotics::motor_on(uint8_t motor, uint8_t direction, uint16_t speed){
-    char buf[2];
-    char value_buf[4];
+    uint8_t ibuf[2];
+    char    cbuf[2];
+
+    uint8_t value_buf[4];
     uint8_t forward_offset[4] = {0, 1, 4, 5};
     uint8_t reverse_offset[4] = {4, 5, 0, 1};
     uint8_t *offset_buf;
@@ -87,7 +93,8 @@ void KitronikRobotics::motor_on(uint8_t motor, uint8_t direction, uint16_t speed
 
     motor_reg = mot_reg_base + (2 * (motor - 1) * reg_offset);
     output_value = speed * 40;
-    memcpy(value_buf, &output_value, sizeof(uint16_t));
+    value_buf[0] = (output_value >> 8) & 0xFF;
+    value_buf[1] = (uint8_t) output_value;
     value_buf[2] = value_buf[3] = 0x00;
     if (direction | KITRONIKROBOTICS_FORWARD) {
         offset_buf = forward_offset;
@@ -95,8 +102,9 @@ void KitronikRobotics::motor_on(uint8_t motor, uint8_t direction, uint16_t speed
         offset_buf = reverse_offset;
     }
     for (uint8_t i = 0; i < 4; i++) {
-        buf[0] = motor_reg + offset_buf[i];
-        buf[1] = value_buf[i];
-        i2c.write(chip_address, buf, 2);
+        ibuf[0] = motor_reg + offset_buf[i];
+        ibuf[1] = value_buf[i];
+        memcpy(cbuf, ibuf, 2);
+        i2c.write(chip_address, cbuf, 2);
     }
 }

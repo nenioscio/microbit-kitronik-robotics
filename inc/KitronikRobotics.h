@@ -51,9 +51,9 @@ class  KitronikRobotics
     static const uint8_t        servo_multiplier  = 226;
     static const uint8_t        servo_zero_offset = 0x66;
 
-    uint8_t                     status;
-    uint8_t                     chip_address; // will be defaulted to 0x6C
     MicroBitI2C                 &i2c; 
+    const uint8_t               chip_address; // will be defaulted to 0x6C
+    uint8_t                     status;
 
     uint8_t                     step_init;
     uint16_t                    step_stage;
