@@ -29,9 +29,9 @@ DEALINGS IN THE SOFTWARE.
 #include "MicroBit.h"
 
 // MicroBit::flags values
-#define KITRONICSROBOTICS_INITIALIZED                    0x01
-#define KITRONICSROBOTICS_FORWARD                        0x02
-#define KITRONICSROBOTICS_REVERSE                        0x04
+#define KITRONIKROBOTICS_INITIALIZED                    0x01
+#define KITRONIKROBOTICS_FORWARD                        0x02
+#define KITRONIKROBOTICS_REVERSE                        0x04
 
 /**
   * Class definition for a MicroBit device.

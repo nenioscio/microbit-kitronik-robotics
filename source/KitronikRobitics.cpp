@@ -61,7 +61,7 @@ void KitronikRobotics::init()
     buf[1] = 0x85; //50Hz
     i2c.write(chip_address, buf, 2);
 
-    for (uint8_t block_reg=0xFA; block_reg < 0xFE, block_reg++) {
+    for (uint8_t block_reg=0xFA; block_reg < 0xFE; block_reg++) {
         buf[0] = block_reg;
         buf[1] = 0x00;
         i2c.write(chip_address, buf, 2);
@@ -77,23 +77,25 @@ void KitronikRobotics::init()
 void KitronikRobotics::motor_on(uint8_t motor, uint8_t direction, uint16_t speed){
     char buf[2];
     char value_buf[4];
-    uint8_t offset_buf[4];
+    uint8_t forward_offset[4] = {0, 1, 4, 5};
+    uint8_t reverse_offset[4] = {4, 5, 0, 1};
+    uint8_t *offset_buf;
     uint8_t motor_reg;
     uint16_t output_value;
-    if !(status & KITRONIKROBOTICS_INITIALIZED)
+    if (!(status & KITRONIKROBOTICS_INITIALIZED))
         init();
 
-    moror_reg = mot_reg_base + (2 * (motor - 1) * reg_offset);
+    motor_reg = mot_reg_base + (2 * (motor - 1) * reg_offset);
     output_value = speed * 40;
     memcpy(value_buf, &output_value, sizeof(uint16_t));
     value_buf[2] = value_buf[3] = 0x00;
     if (direction | KITRONIKROBOTICS_FORWARD) {
-        offset_buf = {0, 1, 4, 5};
+        offset_buf = forward_offset;
     } else {
-        offset_buf = {4, 5, 0, 1};
+        offset_buf = reverse_offset;
     }
     for (uint8_t i = 0; i < 4; i++) {
-        buf[0] = motor_reg + register_buf[i];
+        buf[0] = motor_reg + offset_buf[i];
         buf[1] = value_buf[i];
         i2c.write(chip_address, buf, 2);
     }

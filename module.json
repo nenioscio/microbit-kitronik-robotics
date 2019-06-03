@@ -6,6 +6,9 @@
   "dependencies": {
     "microbit": "lancaster-university/microbit#v2.1.1"
   },
+  "extraIncludes": [
+    "inc"
+  ],
   "targetDependencies": {},
   "bin": "./source"
 }
