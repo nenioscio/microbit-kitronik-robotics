@@ -1,5 +1,5 @@
 {
-  "name": "microbit-kitronics-robotics",
+  "name": "microbit-kitronik-robotics",
   "version": "0.0.1",
   "description": "The micro:bit kitronic robotics board library to use in mirco:bit cpp based projects",
   "license": "MIT",
