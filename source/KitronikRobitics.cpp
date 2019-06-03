@@ -93,11 +93,11 @@ void KitronikRobotics::motor_on(uint8_t motor, uint8_t direction, uint16_t speed
 
     motor_reg = mot_reg_base + (2 * (motor - 1) * reg_offset);
     output_value = speed * 40;
-    value_buf[0] = output_value | 0xFF;
+    value_buf[0] = output_value & 0xFF;
     value_buf[1] = (output_value >> 8);
     value_buf[2] = 0;
     value_buf[3] = 0;
-    if (direction | KITRONIKROBOTICS_FORWARD) {
+    if (direction & KITRONIKROBOTICS_FORWARD) {
         offset_buf = forward_offset;
     } else {
         offset_buf = reverse_offset;
