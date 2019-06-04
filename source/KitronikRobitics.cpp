@@ -51,45 +51,31 @@ KitronikRobotics::KitronikRobotics(MicroBitI2C &_i2c, uint8_t _chip_address) : i
   * @note This method must be called before user code utilises any functionality
   *       contained by uBit.
   */
-void KitronikRobotics::init()
+int KitronikRobotics::init()
 {
-    uint8_t ibuf[2];
-    char cbuf[2];
     int result;
     if (status & KITRONIKROBOTICS_INITIALIZED)
         return MICROBIT_OK;
 
-    ibuf[0] = prescale_reg;
-    ibuf[1] = 0x85; //50Hz
-    memcpy(cbuf, ibuf, 2);
-    result = i2c.write(chip_address, cbuf, 2);
+    result = i2c.writeRegister(chip_address, prescale_reg, 0x85); // 50Hz
     if (result != MICROBIT_OK)
-        return chip_address;
+        return result;
 
     for (uint8_t block_reg=0xFA; block_reg < 0xFE; block_reg++) {
-        ibuf[0] = block_reg;
-        ibuf[1] = 0x00;
-        memcpy(cbuf, ibuf, 2);
-        result = i2c.write(chip_address, cbuf, 2);
+        result = i2c.writeRegister(chip_address, block_reg, 0x00);
         if (result != MICROBIT_OK)
-            return chip_address;
+            return result;
     }
 
-    ibuf[0] = mode_1_reg;
-    ibuf[1] = 0x01;
-    memcpy(cbuf, ibuf, 2);
-    result = i2c.write(chip_address, cbuf, 2);
+    result = i2c.writeRegister(chip_address, mode_1_reg, 0x01);
     if (result != MICROBIT_OK)
-        return chip_address;
+        return result;
 
     status |= KITRONIKROBOTICS_INITIALIZED;
     return MICROBIT_OK;
 }
 
 void KitronikRobotics::motor_on(uint8_t motor, uint8_t direction, uint16_t speed){
-    uint8_t ibuf[2];
-    char    cbuf[2];
-
     uint8_t value_buf[4];
     uint8_t forward_offset[4] = {0, 1, 4, 5};
     uint8_t reverse_offset[4] = {4, 5, 0, 1};
@@ -111,9 +97,6 @@ void KitronikRobotics::motor_on(uint8_t motor, uint8_t direction, uint16_t speed
         offset_buf = reverse_offset;
     }
     for (uint8_t i = 0; i < 4; i++) {
-        ibuf[0] = motor_reg + offset_buf[i];
-        ibuf[1] = value_buf[i];
-        memcpy(cbuf, ibuf, 2);
-        i2c.write(chip_address, cbuf, 2);
+        i2c.writeRegister(chip_address, motor_reg + offset_buf[i], value_buf[1]);
     }
 }
