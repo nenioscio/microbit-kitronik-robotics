@@ -73,63 +73,32 @@ class  KitronikRobotics
     /**
       * Post constructor initialisation method.
       *
-      * This call will initialised the scheduler, memory allocator and Bluetooth stack.
-      *
-      * This is required as the Bluetooth stack can't be brought up in a
-      * static context i.e. in a constructor.
+      * @return MICROBIT_OK on success. Returns ID of the chip if no communication could be established or
+      *         id of subsequent call.
       *
       * @code
-      * uBit.init();
+      * krobotics = new KitronikRobotics(uBit.i2c);
+      * krobotics->init();
       * @endcode
       *
       * @note This method must be called before user code utilises any functionality
-      *       contained by uBit.
+      *       contained by kRobotics device.
       */
-    void init();
+    int init();
 
-    /**
-      * Remove a component from the array of idle thread components
-      *
-      * @param component The component to remove from the idle component array.
-      *
-      * @return MICROBIT_OK on success. MICROBIT_INVALID_PARAMETER is returned if the given component has not been previously added.
-      *
-      * @code
-      * MicroBitI2C i2c(I2C_SDA0, I2C_SCL0);
-      *
-      * // heap allocated - otherwise it will be paged out!
-      * MicroBitAccelerometer* accelerometer = new MicroBitAccelerometer(i2c);
-      *
-      * uBit.addIdleComponent(accelerometer);
-      *
-      * uBit.removeIdleComponent(accelerometer);
-      * @endcode
-      *
-      * @note This interface is now deprecated, and will be removed in the next major release. Please use fiber_remove_idle_component().
-      */
-	//int removeIdleComponent(MicroBitComponent *component);
-    
     /**
       * Turn Motor on and set to given rotational speed in given direction
       *
       * @param motor The id of the motor to start speeding up. 
       *
-      * @param direction The direction of the 
+      * @param direction The direction of the motor rotation (eighter of KROBOTIKROBOTICS_FORWARD or
+      *        KROBOTIKROBOTICS_REVERSE)
       *
-      * @param motor The id of the motor to start speeding up. 
+      * @param speed The motor speed for the given direction in Percent
       *
       * @code
-      * MicroBitI2C i2c(I2C_SDA0, I2C_SCL0);
-      *
-      * // heap allocated - otherwise it will be paged out!
-      * MicroBitAccelerometer* accelerometer = new MicroBitAccelerometer(i2c);
-      *
-      * uBit.addIdleComponent(accelerometer);
-      *
-      * uBit.removeIdleComponent(accelerometer);
+      * krobotics->motor_on(1, KROBOTIKROBOTICS_FORWARD, 10);
       * @endcode
-      *
-      * @note This interface is now deprecated, and will be removed in the next major release. Please use fiber_remove_idle_component().
       */
     void motor_on(uint8_t motor, uint8_t direction, uint16_t speed);
 };

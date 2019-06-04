@@ -55,27 +55,35 @@ void KitronikRobotics::init()
 {
     uint8_t ibuf[2];
     char cbuf[2];
+    int result;
     if (status & KITRONIKROBOTICS_INITIALIZED)
-        return;
+        return MICROBIT_OK;
 
     ibuf[0] = prescale_reg;
     ibuf[1] = 0x85; //50Hz
     memcpy(cbuf, ibuf, 2);
-    i2c.write(chip_address, cbuf, 2);
+    result = i2c.write(chip_address, cbuf, 2);
+    if (result != MICROBIT_OK)
+        return chip_address;
 
     for (uint8_t block_reg=0xFA; block_reg < 0xFE; block_reg++) {
         ibuf[0] = block_reg;
         ibuf[1] = 0x00;
         memcpy(cbuf, ibuf, 2);
-        i2c.write(chip_address, cbuf, 2);
+        result = i2c.write(chip_address, cbuf, 2);
+        if (result != MICROBIT_OK)
+            return chip_address;
     }
 
     ibuf[0] = mode_1_reg;
     ibuf[1] = 0x01;
     memcpy(cbuf, ibuf, 2);
-    i2c.write(chip_address, cbuf, 2);
+    result = i2c.write(chip_address, cbuf, 2);
+    if (result != MICROBIT_OK)
+        return chip_address;
 
     status |= KITRONIKROBOTICS_INITIALIZED;
+    return MICROBIT_OK;
 }
 
 void KitronikRobotics::motor_on(uint8_t motor, uint8_t direction, uint16_t speed){
