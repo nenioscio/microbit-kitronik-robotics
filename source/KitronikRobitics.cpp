@@ -97,6 +97,6 @@ void KitronikRobotics::motor_on(uint8_t motor, uint8_t direction, uint16_t speed
         offset_buf = reverse_offset;
     }
     for (uint8_t i = 0; i < 4; i++) {
-        i2c.writeRegister(chip_address, motor_reg + offset_buf[i], value_buf[1]);
+        i2c.writeRegister(chip_address, motor_reg + offset_buf[i], value_buf[i]);
     }
 }
