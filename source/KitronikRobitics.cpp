@@ -32,7 +32,7 @@ DEALINGS IN THE SOFTWARE.
   * member variables that represent various device drivers used to control
   * aspects of the micro:bit.
   */
-KitronikRobotics::KitronikRobotics(MicroBitI2C &_i2c, uint8_t _chip_address) : i2c(_i2c), chip_address(_chip_address), status(0), step_init(0), step_stage(0), stepper_1_steps(200), stepper_2_steps(200)
+KitronikRobotics::KitronikRobotics(MicroBitI2C &_i2c, uint8_t _chip_address) : i2c(_i2c), chip_address(_chip_address << 1), status(0), step_init(0), step_stage(0), stepper_1_steps(200), stepper_2_steps(200)
 {
 }
 
