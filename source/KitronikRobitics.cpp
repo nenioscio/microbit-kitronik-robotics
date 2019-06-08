@@ -115,7 +115,7 @@ void KitronikRobotics::servo_write(uint8_t servo, uint16_t degrees) {
     degrees = clamp(degrees, (uint16_t) 0, (uint16_t) 180);
 
     servo_reg    = srv_reg_base + ((servo - 1) * reg_offset);
-    output_value = (degrees * 100 * servo_multiplier) / (10000 + servo_zero_offset);
+    output_value = (degrees * 100 * servo_multiplier) / 10000 + servo_zero_offset;
     value_buf[0] = output_value & 0xFF;
     value_buf[1] = (output_value >> 8);
 
